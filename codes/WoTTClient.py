@@ -10,9 +10,9 @@ import asyncio
 import logging
 from wotpy.wot.servient import Servient
 from wotpy.wot.wot import WoT
-from visualize import *
 import numpy as np
 import matplotlib.tri as mtri
+import matplotlib.pyplot as plt
 from matplotlib.cm import ScalarMappable, get_cmap
 from matplotlib.colors import Normalize
 import time
@@ -44,13 +44,6 @@ def cells_extraction(init_cells_info):
 
         init_cells.append(points)
     return np.array(init_cells)
-
-
-def update_points(state, init_points, file_idx):
-    points = np.array(init_points)
-    points[file_idx, :] = state
-    return points
-
 
 def compute_triangle_mean(points, cells, slices):
     triangles = []
