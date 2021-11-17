@@ -27,7 +27,7 @@ The main Gitflow guidelines, and their effects can be found below.
 
   
 
-![Gitflow](figures/Gitflow.png)
+![Gitflow](https://github.com/Ho-lab-jaist/WoTT/blob/main/figures/Gitflow.png)
 
   
 
