@@ -1,2 +1,53 @@
+
 # WoTT
+
 Open and Standardized interfaces for Tactile Things via W3C Web of Things
+
+  
+
+## For Developers
+
+Developers must check the <a  href="docs/workflows.md">Workflow</a> before working in this repository!
+
+## About The WoTT
+
+ - This project implements:
+
+   1. A module, namely *WoTTServer*, to expose a *tactile device* as a W3C *Thing* so that W3C Web of Things clients can interact with the *tactile device* via WoT APIs
+   2. A WoT client that consumes the exposed thing to display a digital twin of a the *tactile device* via WoT APIs
+   
+## Built With
+- WoTTServer
+  - python
+  - WoTpy
+- WoT Client
+	- python
+	- WoTpy
+## Getting Started
+TODO:
+## Contributing
+
+
+Any contributions you make are **greatly appreciated**.
+1. Fork the Project
+
+2. Create your Feature Branch (`git checkout -b feature/aFeature`)
+
+3. Commit your Changes (`git commit -m 'commit string'`)
+
+4. Push to the Branch (`git push origin feature/aFeature`)
+
+5. Open a Pull Request
+## License
+Distributed under the MIT License. See `LICENSE` for more information.
+## Contact
+- Project Manager
+	- Ho Anh Van - [hoanhvanlab@gmail.com](mailto:hoanhvanlab@gmail.com)
+- Advisors
+	- Tan Yasuo -  [ytan@jaist.ac.jp](mailto:ytan@jaist.ac.jp)
+	- Pham Van Cu - [cupham@jaist.ac.jp](mailto:cupham@jaist.ac.jp)
+- Developers
+	- Luu Khanh Quan - 
+	- Nguyen Tai Tuan - [tuan-nguyen@jaist.ac.jp](mailto:tuan-nguyen@jaist.ac.jp)
+## Acknowledgements
+This work was supported in part by JSPS KAKENHI under Grant 18H01406 and JST Precursory Research for Embryonic Science and Technology PRESTO under Grant JPMJPR2038.
