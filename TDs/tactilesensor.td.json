@@ -1,0 +1,233 @@
+{
+    "@context": [
+        "https://www.w3.org/2019/wot/td/v1"
+    ],
+    "id": "wot:tactileSensor:demo",
+    "title": "tactileSensor",
+    "description": "Large-scale Tactile Sensor",
+    "properties":{
+        "skinColor":{
+            "type": "string",
+            "title": "skinColor",
+            "readOnly": true,
+            "writeOnly": false,
+            "observable": false,
+            "description": "color of sensor skin"
+        }, 
+        "skinMaterial":{
+            "type": "string",
+            "title": "skinMaterial",
+            "readOnly": true,
+            "writeOnly": false,
+            "observable": false,
+            "description": "material of sensor skin"
+        },
+        "skinShape":{
+            "type": "object",
+            "title": "skinShape",
+            "description": "Shape and dimension of the tactile sensor",
+            "readOnly": true,
+            "writeOnly": false,
+            "observable": false,
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "name":{
+                          "type": "string",
+                          "const":  "rectangularPrism"
+                        },
+                        "lengthDimension": {
+                            "type": "number",
+                            "unit": "mm"
+                        },
+                        "widthDimension": {
+                            "type": "number",
+                            "unit": "mm"
+                        },
+                        "heightDimension": {
+                            "type": "number",
+                            "unit": "mm"
+                        }
+                    }
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "name":{
+                          "type": "string",
+                          "const":  "cylinder"
+                        },
+                        "baseRadiusDimension": {
+                            "type": "number",
+                            "unit": "mm"
+                        },
+                        "heightDimension": {
+                            "type": "number",
+                            "unit": "mm"
+                        }
+                    }
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "name":{
+                            "type": "string",
+                            "const":  "barrel"
+                        },
+                        "baseRadiusDimension": {
+                            "type": "number",
+                            "unit": "mm"
+                        },
+                        "middleRadiusDimension": {
+                            "type": "number",
+                            "unit": "mm"
+                        },
+                        "heightDimension": {
+                            "type": "number",
+                            "unit": "mm"
+                        }
+                    }
+                }
+            ]
+        },
+        "skinNodes":{
+            "type": "object",
+            "properties":{
+                "numOfNodes":{
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 1000               
+                },
+                "arrayOfNodes":{
+                    "type": "array",
+                    "items":{
+                        "type":"object",
+                        "properties":{
+                            "nodeID":{
+                                "type": "string"
+                            },
+                            "nodeLocation":{
+                                "type": "object",
+                                "properties":{
+                                    "x":{
+                                        "type": "number",
+                                        "unit": "mm"
+                                    },
+                                    "y":{
+                                        "type": "number",
+                                        "unit": "mm"
+                                    },
+                                    "z":{
+                                        "type": "number",
+                                        "unit": "mm"
+                                    }
+                                }
+                            },
+                            "referenceTo":{
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "minItems": 1,
+                    "maxItems": 1000
+                }
+            },
+            "title": "skinNodes",
+            "description": "Nodes make up the skin surface"
+        },
+        "skinCells":{
+            "type": "object",
+            "properties":{
+                "numOfCells":{
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 10000  
+                },
+                "arrayOfCells":{
+                    "type": "array",
+                    "items":{
+                        "type": "object",
+                        "properties":{
+                            "numOfConnectedNodes":{
+                                "type": "integer"
+                            },
+                            "connectedNodes":{
+                                "type": "array",
+                                "items":{
+                                    "type": "string"
+                                },
+                                "minItems": 3,
+                                "maxItems": 3
+                            }
+                        },
+                        "minItems": 1,
+                        "maxItems": 10000
+                    }
+                }
+            },
+            "title": "skinCells",
+            "description": "Cells connected by related nodes, which make up the skin surface"
+        },
+        "coordinateSystem":{
+            "type": "string",
+            "title": "coordinateSystem",
+            "description": "describe the coordinate of sensor link"
+        }
+    },
+    "events": {
+        "touchDetected":{
+            "description": "Inform when touch detected",
+            "data": {
+                "type": "string"
+            }
+        },
+        "skinDeformation":{
+            "description": "Emits event with deformed skin nodes where the skin is touched.",
+            "data": {
+                "type": "object",
+                "properties":{
+                    "numOfDeformedNodes":{
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 1000               
+                    },
+                    "arrayOfDeformedNodes":{
+                        "type": "array",
+                        "items":{
+                            "type":"object",
+                            "properties":{
+                                "deformedNodeID":{
+                                    "type": "string"
+                                },
+                                "deformedNodeLocation":{
+                                    "type": "object",
+                                    "properties":{
+                                        "x":{
+                                            "type": "number",
+                                            "unit": "mm"
+                                        },
+                                        "y":{
+                                            "type": "number",
+                                            "unit": "mm"
+                                        },
+                                        "z":{
+                                            "type": "number",
+                                            "unit": "mm"
+                                        }
+                                    }
+                                },
+                                "referenceTo":{
+                                    "type": "string"
+                                }
+                            }
+                        },
+                        "minItems": 1,
+                        "maxItems": 1000
+                    }
+                }
+            }
+        }
+    },
+    "@type": "Thing"
+}
