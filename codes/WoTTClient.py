@@ -1,3 +1,4 @@
+
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 '''
@@ -10,14 +11,13 @@ import asyncio
 import logging
 from wotpy.wot.servient import Servient
 from wotpy.wot.wot import WoT
-from visualize import *
 import numpy as np
 import matplotlib.tri as mtri
+import matplotlib.pyplot as plt
 from matplotlib.cm import ScalarMappable, get_cmap
 from matplotlib.colors import Normalize
 import time
 import argparse
-
 
 logging.basicConfig()
 LOGGER = logging.getLogger()
@@ -47,18 +47,6 @@ def cells_extraction(init_cells_info):
 
         init_cells.append(points)
     return np.array(init_cells)
-
-
-def update_points(state, init_points, file_idx):
-    """
-    @state: the state of current nodes/points nd.array nx3
-    n is the number of target nodes, used for network outputs
-    @init_points: the state of initial nodes/points nd.array mx3
-    (m >= n)
-    """
-    points = np.array(init_points)
-    points[file_idx, :] = state
-    return points
 
 
 def compute_triangle_mean(points, cells, slices):
