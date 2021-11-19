@@ -16,11 +16,14 @@ import matplotlib.tri as mtri
 from matplotlib.cm import ScalarMappable, get_cmap
 from matplotlib.colors import Normalize
 import time
+import argparse
 
 
 logging.basicConfig()
 LOGGER = logging.getLogger()
 LOGGER.setLevel(logging.INFO)
+parser = argparse.ArgumentParser(description="Url of server")
+parser.add_argument("url", type=str)
 
 
 def points_extraction(init_points_info):
@@ -47,6 +50,12 @@ def cells_extraction(init_cells_info):
 
 
 def update_points(state, init_points, file_idx):
+    """
+    @state: the state of current nodes/points nd.array nx3
+    n is the number of target nodes, used for network outputs
+    @init_points: the state of initial nodes/points nd.array mx3
+    (m >= n)
+    """
     points = np.array(init_points)
     points[file_idx, :] = state
     return points
@@ -136,9 +145,8 @@ class DigitalTwin(object):
 async def main():
 
     wot = WoT(servient=Servient())
-    consumed_thing = await wot.consume_from_url(
-        'http://150.65.152.104:9090/tactilesensor-5fd1037e-1c8c-df9e-7136-ebfb938fc625')
-
+    url_server = parser.parse_args()
+    consumed_thing = await wot.consume_from_url(url_server.url)
     LOGGER.info('Consumed Thing: {}'.format(consumed_thing))
     init_points_info = await consumed_thing.read_property('skinNodes')
     init_points = points_extraction(init_points_info)
