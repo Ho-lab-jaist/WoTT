@@ -48,7 +48,6 @@ def cells_extraction(init_cells_info):
         init_cells.append(points)
     return np.array(init_cells)
 
-
 def compute_triangle_mean(points, cells, slices):
     triangles = []
     for cell in cells:
