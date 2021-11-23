@@ -171,6 +171,7 @@
         },
         "coordinateSystem":{
             "type": "string",
+            "enum": ["", "", ""],
             "title": "coordinateSystem",
             "description": "describe the coordinate of sensor link"
         }
@@ -179,7 +180,7 @@
         "touchDetected":{
             "description": "Inform when touch detected",
             "data": {
-                "type": "string"
+                "type": "boolean"
             }
         },
         "contactAreaExtracted":{
