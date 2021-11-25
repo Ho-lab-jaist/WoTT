@@ -9,26 +9,17 @@
         "skinColor":{
             "type": "string",
             "title": "skinColor",
-            "readOnly": true,
-            "writeOnly": false,
-            "observable": false,
             "description": "color of sensor skin"
         }, 
         "skinMaterial":{
             "type": "string",
             "title": "skinMaterial",
-            "readOnly": true,
-            "writeOnly": false,
-            "observable": false,
             "description": "material of sensor skin"
         },
         "skinShape":{
             "type": "object",
             "title": "skinShape",
             "description": "Shape and dimension of the tactile sensor",
-            "readOnly": true,
-            "writeOnly": false,
-            "observable": false,
             "oneOf": [
                 {
                     "type": "object",
@@ -183,7 +174,7 @@
                 "type": "boolean"
             }
         },
-        "contactAreaExtracted":{
+        "contactAreaInformed":{
             "description": "Emits event with deformed skin nodes where the skin is touched.",
             "data": {
                 "type": "object",
