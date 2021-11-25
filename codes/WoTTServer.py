@@ -323,14 +323,12 @@ def create_skin_state_update_task(exposed_thing, init_points):
                 if sent:
                     print('clear')
                     numOfDeformedNodes = len(last_indices)
-                    arrayOfDeformedNodes = []
-                    points_to_clear = init_points[last_indices, :]                  
+                    arrayOfDeformedNodes = []               
                     for i in range(numOfDeformedNodes):
                         id = last_indices[i]
-                        nodeIntensity = points_to_clear[i]
                         deformedNodesDict = {
                                 'deformedNodeID': str(id),
-                                'deformedNodeIntensity': nodeIntensity
+                                'deformedNodeIntensity': 0.
                             }
                         arrayOfDeformedNodes.append(deformedNodesDict)
                     sent = False
