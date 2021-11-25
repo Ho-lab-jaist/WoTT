@@ -22,44 +22,10 @@ import numpy as np
 import cv2
 import os
 import torch
+from torchvision import transforms
 
-import sensor_process
 # import TacNet
 from networks.vgg_model import Tactile_VGG11
-
-# import modules related to GAN model
-from gan.options.test_options import TestOptions
-from gan.models import create_model
-
-opt = TestOptions().parse()  # get test options
-model = create_model(opt)      # create a model given opt.model and other options
-model.setup(opt)               # regular setup: load and print networks; create schedulers
-
-# Load TacNet
-root_dir = '/home/user/remoteDir'
-model_name = 'TacNet_21_11_10.pt'
-model_name_path = os.path.join('iotouch_env/train_model', model_name)
-model_dir = os.path.join(root_dir, model_name_path)
-tacnet = Tactile_VGG11()
-print('model [Tactile_VGG11] was created')
-print('loading the model from {0}'.format(model_dir))
-tacnet.load_state_dict(torch.load(model_dir))
-print('---------- Tactile Networks initialized -------------')
-dev = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
-tacnet.to(dev)
-tacnet.eval()
-
-init_path = os.path.join(root_dir, 'iotouch_env/train_data/data_0903/ouput_label/init_data.csv')
-init_pos_csv = pd.read_csv(init_path)
-init_position = np.array(init_pos_csv.iloc[0, 1:], dtype=float)
-"""
-For sucessfully read two video camera streams simultaneously,
-we need to use two seperated USB bus for cameras
-e.g, USB ports in front and back of the CPU
-"""
-
-cam_bot = cv2.VideoCapture(2)
-cam_top = cv2.VideoCapture(0)
 
 CATALOGUE_PORT = 9090
 WEBSOCKET_PORT = 9393
@@ -69,239 +35,159 @@ logging.basicConfig()
 LOGGER = logging.getLogger()
 LOGGER.setLevel(logging.INFO)
 
-TD = {
-    "@context": [
-        "https://www.w3.org/2019/wot/td/v1"
-    ],
-    "id": "wot:tactileSensor:demo",
-    "title": "tactileSensor",
-    "description": "Large-scale Tactile Sensor",
-    "properties":{
-        "skinColor":{
-            "type": "string",
-            "title": "skinColor",
-            # "readOnly": true,
-            # "writeOnly": false,
-            # "observable": false,
-            "description": "color of sensor skin"
-        }, 
-        "skinMaterial":{
-            "type": "string",
-            "title": "skinMaterial",
-            # "readOnly": true,
-            # "writeOnly": false,
-            # "observable": false,
-            "description": "material of sensor skin"
-        },
-        "skinShape":{
-            "type": "object",
-            "title": "skinShape",
-            "description": "Shape and dimension of the tactile sensor",
-            # "readOnly": true,
-            # "writeOnly": false,
-            # "observable": false,
-            "oneOf": [
-                {
-                    "type": "object",
-                    "properties": {
-                        "name":{
-                          "type": "string",
-                          "const":  "rectangularPrism"
-                        },
-                        "lengthDimension": {
-                            "type": "number",
-                            "unit": "mm"
-                        },
-                        "widthDimension": {
-                            "type": "number",
-                            "unit": "mm"
-                        },
-                        "heightDimension": {
-                            "type": "number",
-                            "unit": "mm"
-                        }
-                    }
-                },
-                {
-                    "type": "object",
-                    "properties": {
-                        "name":{
-                          "type": "string",
-                          "const":  "cylinder"
-                        },
-                        "baseRadiusDimension": {
-                            "type": "number",
-                            "unit": "mm"
-                        },
-                        "heightDimension": {
-                            "type": "number",
-                            "unit": "mm"
-                        }
-                    }
-                },
-                {
-                    "type": "object",
-                    "properties": {
-                        "name":{
-                            "type": "string",
-                            "const":  "barrel"
-                        },
-                        "baseRadiusDimension": {
-                            "type": "number",
-                            "unit": "mm"
-                        },
-                        "middleRadiusDimension": {
-                            "type": "number",
-                            "unit": "mm"
-                        },
-                        "heightDimension": {
-                            "type": "number",
-                            "unit": "mm"
-                        }
-                    }
-                }
-            ]
-        },
-        "skinNodes":{
-            "type": "object",
-            "properties":{
-                "numOfNodes":{
-                    "type": "integer",
-                    "minimum": 1,
-                    "maximum": 1000               
-                },
-                "arrayOfNodes":{
-                    "type": "array",
-                    "items":{
-                        "type":"object",
-                        "properties":{
-                            "nodeID":{
-                                "type": "string"
-                            },
-                            "nodeLocation":{
-                                "type": "object",
-                                "properties":{
-                                    "x":{
-                                        "type": "number",
-                                        "unit": "mm"
-                                    },
-                                    "y":{
-                                        "type": "number",
-                                        "unit": "mm"
-                                    },
-                                    "z":{
-                                        "type": "number",
-                                        "unit": "mm"
-                                    }
-                                }
-                            },
-                            "referenceTo":{
-                                "type": "string"
-                            }
-                        }
-                    },
-                    "minItems": 1,
-                    "maxItems": 1000
-                }
-            },
-            "title": "skinNodes",
-            "description": "Nodes make up the skin surface"
-        },
-        "skinCells":{
-            "type": "object",
-            "properties":{
-                "numOfCells":{
-                    "type": "integer",
-                    "minimum": 1,
-                    "maximum": 10000  
-                },
-                "arrayOfCells":{
-                    "type": "array",
-                    "items":{
-                        "type": "object",
-                        "properties":{
-                            "numOfConnectedNodes":{
-                                "type": "integer"
-                            },
-                            "connectedNodes":{
-                                "type": "array",
-                                "items":{
-                                    "type": "string"
-                                },
-                                "minItems": 3,
-                                "maxItems": 3
-                            }
-                        },
-                        "minItems": 1,
-                        "maxItems": 10000
-                    }
-                }
-            },
-            "title": "skinCells",
-            "description": "Cells connected by related nodes, which make up the skin surface"
-        },
-        "coordinateSystem":{
-            "type": "string",
-            "title": "coordinateSystem",
-            "description": "describe the coordinate of sensor link"
-        }
-    },
-    "events": {
-        "touchDetected":{
-            "description": "Inform when touch detected",
-            "data": {
-                "type": "string"
-            }
-        },
-        "skinDeformation":{
-            "description": "Emits event with deformed skin nodes where the skin is touched.",
-            "data": {
-                "type": "object",
-                "properties":{
-                    "numOfDeformedNodes":{
-                        "type": "integer",
-                        "minimum": 1,
-                        "maximum": 1000               
-                    },
-                    "arrayOfDeformedNodes":{
-                        "type": "array",
-                        "items":{
-                            "type":"object",
-                            "properties":{
-                                "deformedNodeID":{
-                                    "type": "string"
-                                },
-                                "deformedNodeLocation":{
-                                    "type": "object",
-                                    "properties":{
-                                        "x":{
-                                            "type": "number",
-                                            "unit": "mm"
-                                        },
-                                        "y":{
-                                            "type": "number",
-                                            "unit": "mm"
-                                        },
-                                        "z":{
-                                            "type": "number",
-                                            "unit": "mm"
-                                        }
-                                    }
-                                },
-                                "referenceTo":{
-                                    "type": "string"
-                                }
-                            }
-                        },
-                        "minItems": 1,
-                        "maxItems": 1000
-                    }
-                }
-            }
-        }
-    },
-    "@type": "Thing"
-}
+
+# Load TD-json file
+tdJSON = open("./TDs/tactilesensor.td.json")
+TD = json.load(tdJSON)
+tdJSON.close()
+
+
+def get_free_node_ind(node_idx_path, label_idx_path):
+    df_node_idx = pd.read_csv(node_idx_path)
+    df_label_idx = pd.read_csv(label_idx_path)
+
+    node_idx = np.array(df_node_idx.iloc[:,0], dtype=int) # (full skin) face node indices in vtk file exported from SOFA 
+    node_idx = list(set(node_idx)) # eleminate duplicate elements (indices)
+    node_idx = sorted(node_idx) # sorted the list of indices
+
+    label_idx = list(df_label_idx.iloc[:,0]) #(not full skin) at nodes used for training - labels
+    file_idx = [node_idx.index(idx) for idx in label_idx]
+
+    return file_idx
+
+class TouchInformationProcessing(object):
+    def __init__(self, tacnet_dir='/home/wott/remoteDir/iotouch_env/train_model',
+                       trained_model = 'TacNet_21_11_23_realimage_128.pt',
+                       cam_ind = [1,0],
+                       num_of_nodes = 707,
+                       node_idx_path='./resources/node_idx.csv', 
+                       label_idx_path='./resources/label_idx.csv'):
+
+        # Soft skin representation
+        self.num_of_nodes = num_of_nodes
+        self.free_node_ind = get_free_node_ind(node_idx_path, label_idx_path)
+
+        # Initialize TacNet
+        self.model_dir = os.path.join(tacnet_dir, trained_model)
+        self.init_TacNet()
+
+        # Initialize Cameras
+        """
+        For sucessfully read two video camera streams simultaneously,
+        we need to use two seperated USB bus for cameras
+        e.g, USB ports in front and back of the CPU
+        """
+        self.cam_bot = cv2.VideoCapture(cam_ind[0])
+        self.cam_top = cv2.VideoCapture(cam_ind[1])
+        if self.cam_bot.isOpened() and self.cam_top.isOpened():
+            print('Cameras are ready!')
+        else:
+            assert False, 'Camera connection failed!'
+
+    def init_TacNet(self):
+        self.dev = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
+        self.tacnet = Tactile_VGG11()
+        print('[Tacnet] model was created')
+        self.print_networks(False)
+        print('loading the model from {0}'.format(self.model_dir))
+        self.tacnet.load_state_dict(torch.load(self.model_dir))
+        print('---------- TacNet initialized -------------')
+        self.tacnet.to(self.dev)
+        self.tacnet.eval()
+
+    def print_networks(self, verbose):
+        """Print the total number of parameters in the network and (if verbose) network architecture
+        Parameters:
+            verbose (bool) -- if verbose: print the network architecture
+        """
+        net = getattr(self, 'tacnet')
+        num_params = 0
+        for param in net.parameters():
+            num_params += param.numel()
+        if verbose:
+            print(net)
+        print('[TacNet] Total number of parameters : %.3f M' % (num_params / 1e6))
+        print('-----------------------------------------------')
+
+    def estimate_skin_deformation(self):
+        """
+        Return the estimate of skin node's displacements X - X0 (N, 3)
+        N is the number of nodes, and 3 is Dx, Dy, Dz
+        Refer to Section 3. (Skin Deformation Estimation) in the paper
+        """
+        self.update_tactile_images()
+        self._free_node_displacments = self.estimate_free_node_displacments()
+        return self.get_full_node_displacments()
+
+    def update_tactile_images(self):
+        # Read marker-featured tactile images from camera video streams
+        frame_top = cv2.cvtColor(self.cam_top.read()[1], cv2.COLOR_BGR2RGB)
+        frame_bot = cv2.cvtColor(self.cam_bot.read()[1], cv2.COLOR_BGR2RGB)
+        # Apply pre-processing to the pair of tactile images
+        self._frame_top = self.apply_transform(frame_top)
+        self._frame_bot = self.apply_transform(frame_bot)
+        # Concantenate the two tactile images
+        self._tac_img = torch.cat((self._frame_top, self._frame_bot), dim=1).to(self.dev)
+
+    def estimate_free_node_displacments(self):
+        with torch.no_grad():
+            node_displacments = self.tacnet(self._tac_img).cpu().numpy()
+            return node_displacments
+
+    def get_full_node_displacments(self):
+        """
+        The full skin deformation includes deviations of fixed nodes which is zero, 
+        and the free nodes calculated in "estimate" function
+        """
+        
+        displacements = np.zeros(self.num_of_nodes, 3)
+        displacements[self.free_node_ind, :] = self._free_node_displacments
+
+        return displacements
+
+    def apply_transform(self, img):
+        """
+        Apply pre-processing for the inputted image
+        Parameters:
+            img: image in numpy nd.array (C, H, W)
+        Returns:
+            processed image in tensor format (1, C, H, W)
+        """
+        transform = transforms.Compose([
+        transforms.ToTensor(),
+        transforms.CenterCrop(480),
+        transforms.Resize((256,256))
+        ])
+        return transform(img).unsqueeze(0)
+
+    """
+    Sensor Processing Method for Events
+    """
+    def extract_contact_area(self):
+        """
+        Return node indices where contact is made,
+        and the corresponding node depth (displacement intensity at the node)
+        """
+        full_node_displacements = self.estimate_skin_deformation()
+        nodes_depth = np.linalg.norm(full_node_displacements, axis=1)
+        touched_nodes_indices = np.where(nodes_depth > 5)[0]
+        return nodes_depth[touched_nodes_indices,:], touched_nodes_indices
+
+    def detect_touch(self):
+        """
+        Trigger an event by True signal when an contact occurs on the skin
+        Binary classification task
+        """
+        full_node_displacements = self.estimate_skin_deformation()
+        nodes_depth = np.linalg.norm(full_node_displacements, axis=1)
+        # extract nodes where depth > epsilon = 5 mm
+        touched_nodes_depth = nodes_depth[(nodes_depth>5),:]
+        # the number of touched nodes
+        num_of_touched_nodes = len(touched_nodes_depth)
+        return True if num_of_touched_nodes > 5 else False
+
+touch_processing = TouchInformationProcessing()
+
 
 # async def read_shape_hanlder():
 #     return {
@@ -397,24 +283,19 @@ Create tasks for TD events
 def create_touch_detected_task(exposed_thing):
     """Inform when touch occurs."""
     async def send_event(exposed_thing):
-        count = 0
         while True:
             now = datetime.now() # current date and time
             date_time = now.strftime("%m/%d/%Y, %H:%M:%S")
-            print('datetime:{}'.format(date_time))
-            resource = date_time
-            sec = int(date_time[-1])
-            if (sec%2)==0:
-                count +=1
-                resource = str(count) + ':' + resource
-                print('sent: {}'.format(resource))
-                exposed_thing.emit_event('touchDetected', resource)
-
-            await asyncio.sleep(1)
+            alert = date_time
+            touch_detected = touch_processing.detect_touch()
+            if touch_detected:
+                alert = 'Touched' + 'at' + alert
+                print('Sent: {0}'.format(alert))
+                exposed_thing.emit_event('touchDetected', alert)
+            await asyncio.sleep(0.01)
 
     event_loop = asyncio.get_event_loop()
     event_loop.create_task(send_event(exposed_thing))
-
 
 def create_skin_state_update_task(exposed_thing, init_points):
     """Update node locations where touch is made (change in node locations)."""
@@ -423,22 +304,17 @@ def create_skin_state_update_task(exposed_thing, init_points):
         sent = False
         while True:
             await asyncio.sleep(0.01)
-            deformedNodeLocations, indices = sensor_process.extract_skin_state(model, tacnet, cam_bot, cam_top)
+            deformedNodeIntensities, indices = touch_processing.extract_contact_area()
             numOfDeformedNodes = len(indices)
             arrayOfDeformedNodes = []
             if numOfDeformedNodes > 0:
                 sent = True
                 for i in range(numOfDeformedNodes):
                     id = indices[i]
-                    deformednodeLocation = deformedNodeLocations[i]
+                    deformednodeIntensity = deformedNodeIntensities[i]
                     deformedNodesDict = {
                         'deformedNodeID': str(id),
-                        'deformedNodeLocation': {
-                            'x': deformednodeLocation[0],
-                            'y': deformednodeLocation[1],
-                            'z': deformednodeLocation[2]
-                        },
-                        'referenceTo': 'world'
+                        'deformedNodeIntensity': deformednodeIntensity,
                     }
                     arrayOfDeformedNodes.append(deformedNodesDict)
                 last_indices =  indices   
@@ -451,21 +327,16 @@ def create_skin_state_update_task(exposed_thing, init_points):
                     points_to_clear = init_points[last_indices, :]                  
                     for i in range(numOfDeformedNodes):
                         id = last_indices[i]
-                        nodeLocation = points_to_clear[i]
+                        nodeIntensity = points_to_clear[i]
                         deformedNodesDict = {
                                 'deformedNodeID': str(id),
-                                'deformedNodeLocation': {
-                                    'x': nodeLocation[0],
-                                    'y': nodeLocation[1],
-                                    'z': nodeLocation[2]
-                                },
-                                'referenceTo': 'world'
+                                'deformedNodeIntensity': nodeIntensity
                             }
                         arrayOfDeformedNodes.append(deformedNodesDict)
                     sent = False
                 else:
                     continue
-            exposed_thing.emit_event('skinDeformation', {'numOfDeformedNodes': numOfDeformedNodes, 'arrayOfDeformedNodes': arrayOfDeformedNodes})
+            exposed_thing.emit_event('contactAreaInformed', {'numOfDeformedNodes': numOfDeformedNodes, 'arrayOfDeformedNodes': arrayOfDeformedNodes})
 
     event_loop = asyncio.get_event_loop()
     event_loop.create_task(send_skin_state(exposed_thing, init_points))
@@ -516,7 +387,7 @@ def main():
     exposed_thing.expose()
 
     # create_touch_detected_task(exposed_thing)
-    create_skin_state_update_task(exposed_thing, init_points)
+    # create_skin_state_update_task(exposed_thing, init_points)
 
     LOGGER.info(f'{TD["title"]} is ready')
 
