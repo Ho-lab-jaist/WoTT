@@ -287,7 +287,7 @@ def create_touch_detected_task(exposed_thing):
             timens = time.time_ns()
             touch_detected = touch_processing.detect_touch()
             if touch_detected:
-                alert = 'Touched' + 'at' + str(timens)
+                alert = str(timens)
                 print('Sent: {0}'.format(alert))
                 exposed_thing.emit_event('touchDetected', alert)
             await asyncio.sleep(0.01)
