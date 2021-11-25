@@ -290,7 +290,7 @@ def create_touch_detected_task(exposed_thing):
                 alert = str(timens)
                 print('Sent: {0}'.format(alert))
                 exposed_thing.emit_event('touchDetected', alert)
-            await asyncio.sleep(0.01)
+            await asyncio.sleep(0.05)
 
     event_loop = asyncio.get_event_loop()
     event_loop.create_task(send_event(exposed_thing))
@@ -301,7 +301,7 @@ def create_skin_state_update_task(exposed_thing):
         last_indices = list()
         sent = False
         while True:
-            await asyncio.sleep(0.01)
+            await asyncio.sleep(0.05)
             deformedNodeIntensities, indices = touch_processing.extract_contact_area()
             numOfDeformedNodes = len(indices)
             arrayOfDeformedNodes = []
