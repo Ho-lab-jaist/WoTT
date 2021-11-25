@@ -15,7 +15,7 @@ from wotpy.protocols.http.server import HTTPServer
 from wotpy.protocols.ws.server import WebsocketServer
 from wotpy.wot.servient import Servient
 import pandas as pd
-from datetime import datetime
+import time
 import asyncio
 import numpy as np
 
@@ -284,12 +284,10 @@ def create_touch_detected_task(exposed_thing):
     """Inform when touch occurs."""
     async def send_event(exposed_thing):
         while True:
-            now = datetime.now() # current date and time
-            date_time = now.strftime("%m/%d/%Y, %H:%M:%S")
-            alert = date_time
+            timens = time.time_ns()
             touch_detected = touch_processing.detect_touch()
             if touch_detected:
-                alert = 'Touched' + 'at' + alert
+                alert = 'Touched' + 'at' + str(timens)
                 print('Sent: {0}'.format(alert))
                 exposed_thing.emit_event('touchDetected', alert)
             await asyncio.sleep(0.01)
@@ -297,9 +295,9 @@ def create_touch_detected_task(exposed_thing):
     event_loop = asyncio.get_event_loop()
     event_loop.create_task(send_event(exposed_thing))
 
-def create_skin_state_update_task(exposed_thing, init_points):
+def create_skin_state_update_task(exposed_thing):
     """Update node locations where touch is made (change in node locations)."""
-    async def send_skin_state(exposed_thing, init_points):
+    async def send_skin_state(exposed_thing):
         last_indices = list()
         sent = False
         while True:
@@ -337,7 +335,7 @@ def create_skin_state_update_task(exposed_thing, init_points):
             exposed_thing.emit_event('contactAreaInformed', {'numOfDeformedNodes': numOfDeformedNodes, 'arrayOfDeformedNodes': arrayOfDeformedNodes})
 
     event_loop = asyncio.get_event_loop()
-    event_loop.create_task(send_skin_state(exposed_thing, init_points))
+    event_loop.create_task(send_skin_state(exposed_thing))
 
 @tornado.gen.coroutine
 def main():
@@ -359,7 +357,6 @@ def main():
 
     # Produce the Thing from Thing Description
     exposed_thing = wot.produce(json.dumps(TD))
-
 
     # async def read_color_hanlder():
     #     return "black"
@@ -385,7 +382,7 @@ def main():
     exposed_thing.expose()
 
     create_touch_detected_task(exposed_thing)
-    create_skin_state_update_task(exposed_thing, init_points)
+    create_skin_state_update_task(exposed_thing)
 
     LOGGER.info(f'{TD["title"]} is ready')
 
