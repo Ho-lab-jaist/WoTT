@@ -191,6 +191,9 @@
             "data": {
                 "type": "object",
                 "properties":{
+                    "timeStamp":{
+                        "type": "number"
+                    },
                     "numOfDeformedNodes":{
                         "type": "integer",
                         "minimum": 1,

@@ -332,7 +332,7 @@ def create_skin_state_update_task(exposed_thing):
                     sent = False
                 else:
                     continue
-            exposed_thing.emit_event('contactAreaInformed', {'numOfDeformedNodes': numOfDeformedNodes, 'arrayOfDeformedNodes': arrayOfDeformedNodes})
+            exposed_thing.emit_event('contactAreaInformed', {'timeStamp': time.time_ns(), 'numOfDeformedNodes': numOfDeformedNodes, 'arrayOfDeformedNodes': arrayOfDeformedNodes})
 
     event_loop = asyncio.get_event_loop()
     event_loop.create_task(send_skin_state(exposed_thing))
