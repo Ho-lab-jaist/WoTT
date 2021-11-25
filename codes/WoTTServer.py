@@ -25,7 +25,7 @@ import torch
 from torchvision import transforms
 
 # import TacNet
-from networks.vgg_model import Tactile_VGG11
+from vgg_model import Tactile_VGG11
 
 CATALOGUE_PORT = 9090
 WEBSOCKET_PORT = 9393
@@ -56,9 +56,9 @@ def get_free_node_ind(node_idx_path, label_idx_path):
     return file_idx
 
 class TouchInformationProcessing(object):
-    def __init__(self, tacnet_dir='/home/wott/remoteDir/iotouch_env/train_model',
+    def __init__(self, tacnet_dir='./resources',
                        trained_model = 'TacNet_21_11_23_realimage_128.pt',
-                       cam_ind = [1,0],
+                       cam_ind = [2, 0],
                        num_of_nodes = 707,
                        node_idx_path='./resources/node_idx.csv', 
                        label_idx_path='./resources/label_idx.csv'):
@@ -140,8 +140,8 @@ class TouchInformationProcessing(object):
         and the free nodes calculated in "estimate" function
         """
         
-        displacements = np.zeros(self.num_of_nodes, 3)
-        displacements[self.free_node_ind, :] = self._free_node_displacments
+        displacements = np.zeros((self.num_of_nodes, 3))
+        displacements[self.free_node_ind, :] = self._free_node_displacments.reshape(-1, 3)
 
         return displacements
 
@@ -171,7 +171,7 @@ class TouchInformationProcessing(object):
         full_node_displacements = self.estimate_skin_deformation()
         nodes_depth = np.linalg.norm(full_node_displacements, axis=1)
         touched_nodes_indices = np.where(nodes_depth > 5)[0]
-        return nodes_depth[touched_nodes_indices,:], touched_nodes_indices
+        return nodes_depth[touched_nodes_indices], touched_nodes_indices
 
     def detect_touch(self):
         """
@@ -181,7 +181,7 @@ class TouchInformationProcessing(object):
         full_node_displacements = self.estimate_skin_deformation()
         nodes_depth = np.linalg.norm(full_node_displacements, axis=1)
         # extract nodes where depth > epsilon = 5 mm
-        touched_nodes_depth = nodes_depth[(nodes_depth>5),:]
+        touched_nodes_depth = nodes_depth[(nodes_depth>5)]
         # the number of touched nodes
         num_of_touched_nodes = len(touched_nodes_depth)
         return True if num_of_touched_nodes > 5 else False
@@ -386,8 +386,8 @@ def main():
 
     exposed_thing.expose()
 
-    # create_touch_detected_task(exposed_thing)
-    # create_skin_state_update_task(exposed_thing, init_points)
+    create_touch_detected_task(exposed_thing)
+    create_skin_state_update_task(exposed_thing, init_points)
 
     LOGGER.info(f'{TD["title"]} is ready')
 

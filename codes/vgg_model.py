@@ -23,7 +23,7 @@ class Tactile_VGG11(nn.Module):
     self.conv52 = nn.Conv2d(512, 512, 3, 1, padding=pad, bias=bias)
     self.batch_norm512 = nn.BatchNorm2d(512) 
 
-    num_of_neurons = 4096
+    num_of_neurons = 128
     outputs = 1755 #585*3
     self.fc = nn.Linear(512*8*8, outputs, bias=True)
     self.fc1 = nn.Linear(512*8*8, num_of_neurons, bias=True)
