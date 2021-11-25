@@ -160,11 +160,23 @@
             "title": "skinCells",
             "description": "Cells connected by related nodes, which make up the skin surface"
         },
-        "coordinateSystem":{
-            "type": "string",
-            "enum": ["", "", ""],
-            "title": "coordinateSystem",
-            "description": "describe the coordinate of sensor link"
+        "sensorCoordinateFrame":{
+            "type": "object",
+            "properties":{
+                "coordinateFrameName:":{
+                    "type": "string"
+                },
+                "originLocation":{
+                    "type": "string",
+                    "enum": ["centerOfGravity", "centerOfBottomCricle", "topLeftCorner", "bottomLeftCorner"]
+                },
+                "axisOrientation":{
+                    "type": "string",
+                    "enum": ["x: forward, y: left, z: up", "z: forward, x: right, y: down"]
+                }
+            },
+            "title": "sensorCoordinateFrame",
+            "description": "describe the coordinate frame of the sensor"
         }
     },
     "events": {
