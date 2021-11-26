@@ -229,8 +229,21 @@
                     "enum": ["centerOfGravity", "centerOfBottomCricle", "topLeftCorner", "bottomLeftCorner"]
                 },
                 "axisOrientation":{
-                    "type": "string",
-                    "enum": ["x: forward, y: left, z: up", "z: forward, x: right, y: down"]
+                    "type": "object",
+                    "properties":{
+                        "xAsix":{
+                            "type": "string",
+                            "enum": ["forward"]
+                        },
+                        "yAsix":{
+                            "type": "string",
+                            "enum": ["left"]
+                        },
+                        "zAsix":{
+                            "type": "string",
+                            "enum": ["up"]
+                        }
+                    }
                 }
             },
             "title": "sensorCoordinateFrame",
