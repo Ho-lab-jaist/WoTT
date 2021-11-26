@@ -194,46 +194,25 @@
                         }
                     }
                 },
-                "contactWrenches":{
+                "contactForces":{
                     "type": "array",
                     "items":{
                         "type": "object",
                         "properties":{
-                            "contactForces":{
-                                "type": "object",
-                                "x":{
-                                    "type": "number",
-                                    "unit": "N"
-                                },
-                                "y":{
-                                    "type": "number",
-                                    "unit": "N"
-                                },
-                                "z":{
-                                    "type": "number",
-                                    "unit": "N"
-                                },
-                                "referenceTo":{
-                                    "type": "string"
-                                }
+                            "x":{
+                                "type": "number",
+                                "unit": "N"
                             },
-                            "contactTorques":{
-                                "type": "object",
-                                "x":{
-                                    "type": "number",
-                                    "unit": "Nm"
-                                },
-                                "y":{
-                                    "type": "number",
-                                    "unit": "Nm"
-                                },
-                                "z":{
-                                    "type": "number",
-                                    "unit": "Nm"
-                                },
-                                "referenceTo":{
-                                    "type": "string"
-                                }
+                            "y":{
+                                "type": "number",
+                                "unit": "N"
+                            },
+                            "z":{
+                                "type": "number",
+                                "unit": "N"
+                            },
+                            "referenceTo":{
+                                "type": "string"
                             }
                         }
                     }
