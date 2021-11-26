@@ -224,9 +224,6 @@
         "sensorCoordinateFrame":{
             "type": "object",
             "properties":{
-                "coordinateFrameName:":{
-                    "type": "string"
-                },
                 "originLocation":{
                     "type": "string",
                     "enum": ["centerOfGravity", "centerOfBottomCricle", "topLeftCorner", "bottomLeftCorner"]
