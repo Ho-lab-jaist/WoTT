@@ -239,8 +239,8 @@
                     }
                 }
             },
-            "title": "contactForce",
-            "description": "forces acting on the skin"
+            "title": "contactInformation",
+            "description": "information about contacts occured on the sensor skin, including contact points and contact wrenches (forces and torques)"
         },
         "sensorCoordinateFrame":{
             "type": "object",
