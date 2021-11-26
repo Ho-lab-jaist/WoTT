@@ -6,13 +6,18 @@
     "title": "tactileSensor",
     "description": "Large-scale Tactile Sensor",
     "properties":{
-        "skinColor":{
-            "type": "string",
-            "title": "skinColor",
-            "description": "color of sensor skin"
-        }, 
         "skinMaterial":{
-            "type": "string",
+            "type": "object",
+            "properties":{
+                "materialType":{
+                    "type": "string",
+                    "enum": ["ecoflex", "dragonskin"]
+                },
+                "materialShoreHardness":{
+                    "type": "string",
+                    "enum": ["Shore 00", "Shore A", "Shore D"]
+                }
+            },
             "title": "skinMaterial",
             "description": "material of sensor skin"
         },
@@ -24,7 +29,7 @@
                 {
                     "type": "object",
                     "properties": {
-                        "name":{
+                        "shapeType":{
                           "type": "string",
                           "const":  "rectangularPrism"
                         },
@@ -45,7 +50,7 @@
                 {
                     "type": "object",
                     "properties": {
-                        "name":{
+                        "shapeType":{
                           "type": "string",
                           "const":  "cylinder"
                         },
@@ -62,7 +67,7 @@
                 {
                     "type": "object",
                     "properties": {
-                        "name":{
+                        "shapeType":{
                             "type": "string",
                             "const":  "barrel"
                         },
@@ -112,11 +117,11 @@
                                     "z":{
                                         "type": "number",
                                         "unit": "mm"
+                                    },
+                                    "referenceTo":{
+                                        "type": "string"
                                     }
                                 }
-                            },
-                            "referenceTo":{
-                                "type": "string"
                             }
                         }
                     },
@@ -140,7 +145,7 @@
                     "items":{
                         "type": "object",
                         "properties":{
-                            "numOfConnectedNodes":{
+                            "cellID":{
                                 "type": "integer"
                             },
                             "connectedNodes":{
@@ -159,6 +164,83 @@
             },
             "title": "skinCells",
             "description": "Cells connected by related nodes, which make up the skin surface"
+        },
+        "contactInformation":{
+            "type": "object",
+            "properties":{
+                "numOfContacts":{
+                    "type": "integer"
+                },
+                "contactLocations":{
+                    "type": "array",
+                    "items":{
+                        "type": "object",
+                        "properties":{
+                            "x":{
+                                "type": "number",
+                                "unit": "mm"
+                            },
+                            "y":{
+                                "type": "number",
+                                "unit": "mm"
+                            },
+                            "z":{
+                                "type": "number",
+                                "unit": "mm"
+                            },
+                            "referenceTo":{
+                                "type": "string"
+                            }
+                        }
+                    }
+                },
+                "contactWrenches":{
+                    "type": "array",
+                    "items":{
+                        "type": "object",
+                        "properties":{
+                            "contactForces":{
+                                "type": "object",
+                                "x":{
+                                    "type": "number",
+                                    "unit": "N"
+                                },
+                                "y":{
+                                    "type": "number",
+                                    "unit": "N"
+                                },
+                                "z":{
+                                    "type": "number",
+                                    "unit": "N"
+                                },
+                                "referenceTo":{
+                                    "type": "string"
+                                }
+                            },
+                            "contactTorques":{
+                                "type": "object",
+                                "x":{
+                                    "type": "number",
+                                    "unit": "Nm"
+                                },
+                                "y":{
+                                    "type": "number",
+                                    "unit": "Nm"
+                                },
+                                "z":{
+                                    "type": "number",
+                                    "unit": "Nm"
+                                },
+                                "referenceTo":{
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "title": "contactForce",
+            "description": "forces acting on the skin"
         },
         "sensorCoordinateFrame":{
             "type": "object",
@@ -186,7 +268,13 @@
                 "type": "boolean"
             }
         },
-        "contactAreaInformed":{
+        "slipDetected":{
+            "description": "Inform when slip on skin surface occurs",
+            "data": {
+                "type": "boolean"
+            }
+        },
+        "skinDeformed":{
             "description": "Emits event with deformed skin nodes where the skin is touched.",
             "data": {
                 "type": "object",
