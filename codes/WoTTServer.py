@@ -25,7 +25,7 @@ import torch
 from torchvision import transforms
 
 # import TacNet
-from vgg_model import Tactile_VGG11
+from vgg_model import TacNet
 
 CATALOGUE_PORT = 9090
 WEBSOCKET_PORT = 9393
@@ -86,7 +86,7 @@ class TouchInformationProcessing(object):
 
     def init_TacNet(self):
         self.dev = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
-        self.tacnet = Tactile_VGG11()
+        self.tacnet = TacNet()
         print('[Tacnet] model was created')
         self.print_networks(False)
         print('loading the model from {0}'.format(self.model_dir))
@@ -284,11 +284,15 @@ def create_touch_detected_task(exposed_thing):
     """Inform when touch occurs."""
     async def send_event(exposed_thing):
         while True:
-            timens = time.time_ns()
+            #t1
+            # timens = time.time_ns()
             touch_detected = touch_processing.detect_touch()
+            #t2
+            timens = time.time_ns()
             if touch_detected:
                 alert = str(timens)
                 print('Sent: {0}'.format(alert))
+                #t3
                 exposed_thing.emit_event('touchDetected', alert)
             await asyncio.sleep(0.05)
 
@@ -302,7 +306,11 @@ def create_skin_state_update_task(exposed_thing):
         sent = False
         while True:
             await asyncio.sleep(0.05)
+            #t1
+            # timens = time.time_ns()
             deformedNodeIntensities, indices = touch_processing.extract_contact_area()
+            #t2
+            timens = time.time_ns()
             numOfDeformedNodes = len(indices)
             arrayOfDeformedNodes = []
             if numOfDeformedNodes > 0:
@@ -317,6 +325,9 @@ def create_skin_state_update_task(exposed_thing):
                     arrayOfDeformedNodes.append(deformedNodesDict)
                 last_indices =  indices   
                 LOGGER.info('Skin Deformed!')
+                #t3
+                timens = time.time_ns()
+                exposed_thing.emit_event('skinDeformed', {'timeStamp': timens, 'numOfDeformedNodes': numOfDeformedNodes, 'arrayOfDeformedNodes': arrayOfDeformedNodes})
             else:
                 if sent:
                     print('clear')
@@ -330,9 +341,13 @@ def create_skin_state_update_task(exposed_thing):
                             }
                         arrayOfDeformedNodes.append(deformedNodesDict)
                     sent = False
-                else:
-                    continue
-            exposed_thing.emit_event('contactAreaInformed', {'timeStamp': time.time_ns(), 'numOfDeformedNodes': numOfDeformedNodes, 'arrayOfDeformedNodes': arrayOfDeformedNodes})
+                    #t3
+                    timens = time.time_ns()
+                    exposed_thing.emit_event('skinDeformed', {'timeStamp': timens, 'numOfDeformedNodes': numOfDeformedNodes, 'arrayOfDeformedNodes': arrayOfDeformedNodes})
+                # else:
+                #     continue
+
+                # exposed_thing.emit_event('contactAreaInformed', {'timeStamp': time.time_ns(), 'numOfDeformedNodes': numOfDeformedNodes, 'arrayOfDeformedNodes': arrayOfDeformedNodes})
 
     event_loop = asyncio.get_event_loop()
     event_loop.create_task(send_skin_state(exposed_thing))
@@ -364,13 +379,26 @@ def main():
     # exposed_thing.set_property_read_handler("skinColor", read_color_hanlder)
     # exposed_thing.set_property_read_handler("skinShape", read_shape_hanlder)
   
-    yield exposed_thing.properties['skinColor'].write('black')
     yield exposed_thing.properties['skinShape'].write({
         'name': 'cylinder',
         'baseRadiusDimension': 60,
         'heightDimension': 260
     })
     
+    # yield exposed_thing.properties['ACK'].write(False)
+
+    # # Observe the value of maintenanceNeeded property
+    # exposed_thing.properties['ACK'].subscribe(
+
+        # Notify a "maintainer" when the value has changed
+        # (the notify function here simply logs a message to the console)
+
+        # on_next=lambda data: notify(f'Value changed for an observable property: {data}'),
+        # on_completed=notify('Subscribed for an observable property: maintenanceNeeded'),
+        # on_error=lambda error: notify(f'Error for an observable property maintenanceNeeded: {error}')
+    # )
+
+
     init_points, skin_cells = load_resources(vtk_file='./resources/skin.vtk')
     # create dictionary for skinNodes dataschema
     skinNodeData = createSkinNodesProperty(init_points)

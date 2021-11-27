@@ -1,9 +1,9 @@
 import torch.nn as nn
 
 
-class Tactile_VGG11(nn.Module):
+class TacNet(nn.Module):
   def __init__(self, in_nc=6, pad = 1, bias=False):
-    super(Tactile_VGG11, self).__init__()
+    super(TacNet, self).__init__()
 
     # convolutional block 1
     self.conv11 = nn.Conv2d(in_nc, 64, 3, stride=1, padding=pad, bias=bias)
