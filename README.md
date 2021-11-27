@@ -19,7 +19,10 @@ Developers must check the <a  href="docs/workflows.md">Workflow</a> before worki
 ## Built With
 - WoTTServer
   - python
-  - WoTpy
+  - wotpy
+  - pytorch
+  - torchvision
+  - opencv
 - WoT Client
 	- python
 	- WoTpy
