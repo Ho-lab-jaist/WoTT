@@ -45,7 +45,7 @@ Any contributions you make are **greatly appreciated**.
 Distributed under the MIT License. See `LICENSE` for more information.
 ## Contact
 - Project Manager
-	- Ho Anh Van - [hoanhvanlab@gmail.com](mailto:hoanhvanlab@gmail.com)
+	- Ho Anh Van - [van-ho@jaist.ac.jp](mailto:van-ho@jaist.ac.jp)
 - Advisors
 	- Tan Yasuo -  [ytan@jaist.ac.jp](mailto:ytan@jaist.ac.jp)
 	- Pham Van Cu - [cupham@jaist.ac.jp](mailto:cupham@jaist.ac.jp)
