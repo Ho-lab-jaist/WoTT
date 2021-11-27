@@ -50,7 +50,7 @@ Distributed under the MIT License. See `LICENSE` for more information.
 	- Tan Yasuo -  [ytan@jaist.ac.jp](mailto:ytan@jaist.ac.jp)
 	- Pham Van Cu - [cupham@jaist.ac.jp](mailto:cupham@jaist.ac.jp)
 - Developers
-	- Luu Khanh Quan - 
+	- Luu Khanh Quan - [quan-luu@jaist.ac.jp](mailto:quan-luu@jaist.ac.jp)
 	- Nguyen Tai Tuan - [tuan-nguyen@jaist.ac.jp](mailto:tuan-nguyen@jaist.ac.jp)
 ## Acknowledgements
 This work was supported in part by JSPS KAKENHI under Grant 18H01406 and JST Precursory Research for Embryonic Science and Technology PRESTO under Grant JPMJPR2038.
