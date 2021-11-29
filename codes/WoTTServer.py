@@ -386,8 +386,9 @@ def main():
     })
 
     yield exposed_thing.properties['skinShape'].write({
-        'name': 'cylinder',
+        'name': 'barrel',
         'baseRadiusDimension': 60,
+        'middleRadiusDimension': 80,
         'heightDimension': 260
     })
 
