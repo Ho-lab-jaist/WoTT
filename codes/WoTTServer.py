@@ -379,10 +379,21 @@ def main():
     # exposed_thing.set_property_read_handler("skinColor", read_color_hanlder)
     # exposed_thing.set_property_read_handler("skinShape", read_shape_hanlder)
   
+
+    yield exposed_thing.properties['skinMaterial'].write({
+        'materialType': 'dragonskin',
+        'materialShoreHardness': 'Shore D'
+    })
+
     yield exposed_thing.properties['skinShape'].write({
         'name': 'cylinder',
         'baseRadiusDimension': 60,
         'heightDimension': 260
+    })
+
+    yield exposed_thing.properties['sensorCoordinateFrame'].write({
+        'originLocation': 'centerOfBottomCricle',
+        'axisOrientation': {'xAsix': 'forward', 'yAsix': 'left','zAsix': 'up'}
     })
     
     # yield exposed_thing.properties['ACK'].write(False)
