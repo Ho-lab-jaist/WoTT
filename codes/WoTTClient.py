@@ -48,6 +48,7 @@ def cells_extraction(init_cells_info):
         init_cells.append(points)
     return np.array(init_cells)
 
+
 def compute_triangle_mean(points, cells, slices):
     triangles = []
     for cell in cells:
@@ -61,7 +62,7 @@ def compute_triangle_mean(points, cells, slices):
     return triangles.mean(axis=1)
 
 
-def create_silces(num_triangle):
+def create_slices(num_triangle):
     start = 0
     stop = 3
     slices = []
@@ -70,6 +71,30 @@ def create_silces(num_triangle):
         start +=3
         stop +=3
     return slices
+
+
+def time_eval(item):
+    t = (time.time_ns() - int(item.data))*10**-9
+    print(t)
+
+
+class TimeEval(object):
+    def __init__(self):
+        self.time_data = list()
+    def time_eval(self, item):
+        # print(int(item.data))
+        # print()
+        t_now = time.time_ns()
+        t = (t_now - int(item.data)) * 10 ** -9- 0.000140
+        if len(self.time_data) < 10:
+            self.time_data.append(t)
+            print(t)
+        elif len(self.time_data) == 10:
+            self.time_data = np.array(self.time_data)
+            mean_time = np.mean(self.time_data)
+            std_time = np.std(self.time_data)
+            print('mean of time: ',mean_time)
+            print('std of time: ',std_time)
 
 
 class DigitalTwin(object):
@@ -81,7 +106,7 @@ class DigitalTwin(object):
         init_cells = init_cells.astype(int)
         list_cells = init_cells.tolist()
         self.triangles = list_cells
-        self.slices = create_silces(len(self.triangles))
+        self.slices = create_slices(len(self.triangles))
 
         self.init_triangles_mean = compute_triangle_mean(self.init_points, self.triangles, self.slices)
         plt.ion()
@@ -90,13 +115,13 @@ class DigitalTwin(object):
         self.norm = Normalize(vmin=0, vmax=16)
         mappable = ScalarMappable(cmap='coolwarm', norm=self.norm)
         self.fig.colorbar(mappable, shrink=0.5, aspect=5)
-        self.start = time.time()
+        # self.start = time.time()
+        self.time_data = list()
 
     def draw(self, points):
         updated_triangles_mean = compute_triangle_mean(points, self.triangles, self.slices)
 
         d = np.linalg.norm(updated_triangles_mean - self.init_triangles_mean, axis=1)
-
         triang = mtri.Triangulation(points[:, 0], points[:, 1], triangles=self.triangles)
         z_ls = points[:, 2].tolist()
         skin = self.ax.plot_trisurf(triang, z_ls)
@@ -117,10 +142,10 @@ class DigitalTwin(object):
         if data['numOfDeformedNodes']>0:
             for i in range(data['numOfDeformedNodes']):
                 idx_new = data['arrayOfDeformedNodes'][i]['deformedNodeID']
-                x_new = data['arrayOfDeformedNodes'][i]['deformedNodeLocation']['x']
-                y_new = data['arrayOfDeformedNodes'][i]['deformedNodeLocation']['y']
-                z_new = data['arrayOfDeformedNodes'][i]['deformedNodeLocation']['z']
-                coor = [x_new, y_new, z_new]
+                displacement = data['arrayOfDeformedNodes'][i]['deformedNodeIntensity']
+                x_new = self.x[int(idx_new)]*(1-displacement/np.sqrt(self.x[int(idx_new)]*self.x[int(idx_new)]+self.y[int(idx_new)]*self.y[int(idx_new)]))
+                y_new = self.y[int(idx_new)]*(1-displacement/np.sqrt(self.x[int(idx_new)]*self.x[int(idx_new)]+self.y[int(idx_new)]*self.y[int(idx_new)]))
+                coor = [x_new, y_new, self.z[int(idx_new)]]
                 updated_points.append(coor)
                 updated_id.append(int(idx_new))
             updated_points = np.array(updated_points)
@@ -131,6 +156,7 @@ class DigitalTwin(object):
 
 async def main():
 
+    t_start = time.time_ns()
     wot = WoT(servient=Servient())
     url_server = parser.parse_args()
     consumed_thing = await wot.consume_from_url(url_server.url)
@@ -139,12 +165,16 @@ async def main():
     init_points = points_extraction(init_points_info)
     init_cells_info = await consumed_thing.read_property('skinCells')
     init_cells = cells_extraction(init_cells_info)
+    mat = await consumed_thing.read_property('skinMaterial')
+    shape = await consumed_thing.read_property('skinShape')
+    contact_info = await consumed_thing.read_property('contactInformation')
+    sensor_coor = await consumed_thing.read_property('sensorCoordinateFrame')
     twin = DigitalTwin(init_points, init_cells)
     twin.draw(init_points)
-    consumed_thing.events['skinDeformation'].subscribe(
+    consumed_thing.events['skinDeformed'].subscribe(
         on_next=twin.update,
-        on_completed=LOGGER.info('Subscribed for an event: skinDeformation'),
-        on_error=lambda error: LOGGER.info(f'Error for an event touchDetect: {error}'),
+        on_completed=LOGGER.info('Subscribed for an event: skinDeformed'),
+        on_error=lambda error: LOGGER.info(f'Error for an event skinDeformed: {error}'),
     )
 
 
