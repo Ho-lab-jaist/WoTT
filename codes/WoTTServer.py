@@ -1,12 +1,5 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-
-'''
-This is an example of Web of Things producer ("server" mode) Thing script.
-It considers a fictional smart coffee machine in order to demonstrate the capabilities of Web of Things.
-The example is ported from the node-wot environment -
-https://github.com/eclipse/thingweb.node-wot/blob/master/packages/examples/src/scripts/coffee-machine.ts.
-'''
 import json
 import logging
 import tornado.gen
