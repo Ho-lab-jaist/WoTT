@@ -251,19 +251,14 @@
         }
     },
     "events": {
-        "touchDetected":{
-            "description": "Inform when touch detected",
+        "actionDetection":{
+            "description": "Inform which tactile primitive acting on the sensing skin surface",
             "data": {
-                "type": "boolean"
+                "type": "string",
+                "enum": ["touch", "slip", "pinch", "pat", "collision", "press"]
             }
         },
-        "slipDetected":{
-            "description": "Inform when slip on skin surface occurs",
-            "data": {
-                "type": "boolean"
-            }
-        },
-        "skinDeformed":{
+        "skinDeformedDetection":{
             "description": "Emits event with deformed skin nodes where the skin is touched.",
             "data": {
                 "type": "object",

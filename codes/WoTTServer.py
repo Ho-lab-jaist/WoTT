@@ -286,7 +286,7 @@ def create_touch_detected_task(exposed_thing):
                 alert = str(timens)
                 print('Sent: {0}'.format(alert))
                 #t3
-                exposed_thing.emit_event('touchDetected', alert)
+                exposed_thing.emit_event('actionDetection', alert)
             await asyncio.sleep(0.05)
 
     event_loop = asyncio.get_event_loop()
@@ -320,7 +320,7 @@ def create_skin_state_update_task(exposed_thing):
                 LOGGER.info('Skin Deformed!')
                 #t3
                 timens = time.time_ns()
-                exposed_thing.emit_event('skinDeformed', {'timeStamp': timens, 'numOfDeformedNodes': numOfDeformedNodes, 'arrayOfDeformedNodes': arrayOfDeformedNodes})
+                exposed_thing.emit_event('skinDeformedDetection', {'timeStamp': timens, 'numOfDeformedNodes': numOfDeformedNodes, 'arrayOfDeformedNodes': arrayOfDeformedNodes})
             else:
                 if sent:
                     print('clear')
@@ -336,7 +336,7 @@ def create_skin_state_update_task(exposed_thing):
                     sent = False
                     #t3
                     timens = time.time_ns()
-                    exposed_thing.emit_event('skinDeformed', {'timeStamp': timens, 'numOfDeformedNodes': numOfDeformedNodes, 'arrayOfDeformedNodes': arrayOfDeformedNodes})
+                    exposed_thing.emit_event('skinDeformedDetection', {'timeStamp': timens, 'numOfDeformedNodes': numOfDeformedNodes, 'arrayOfDeformedNodes': arrayOfDeformedNodes})
                 # else:
                 #     continue
 
@@ -366,13 +366,8 @@ def main():
     # Produce the Thing from Thing Description
     exposed_thing = wot.produce(json.dumps(TD))
 
-    # async def read_color_hanlder():
-    #     return "black"
-
-    # exposed_thing.set_property_read_handler("skinColor", read_color_hanlder)
     # exposed_thing.set_property_read_handler("skinShape", read_shape_hanlder)
   
-
     yield exposed_thing.properties['skinMaterial'].write({
         'materialType': 'dragonskin',
         'materialShoreHardness': 'Shore D'
@@ -390,20 +385,6 @@ def main():
         'axisOrientation': {'xAsix': 'forward', 'yAsix': 'left','zAsix': 'up'}
     })
     
-    # yield exposed_thing.properties['ACK'].write(False)
-
-    # # Observe the value of maintenanceNeeded property
-    # exposed_thing.properties['ACK'].subscribe(
-
-        # Notify a "maintainer" when the value has changed
-        # (the notify function here simply logs a message to the console)
-
-        # on_next=lambda data: notify(f'Value changed for an observable property: {data}'),
-        # on_completed=notify('Subscribed for an observable property: maintenanceNeeded'),
-        # on_error=lambda error: notify(f'Error for an observable property maintenanceNeeded: {error}')
-    # )
-
-
     init_points, skin_cells = load_resources(vtk_file='./resources/skin.vtk')
     # create dictionary for skinNodes dataschema
     skinNodeData = createSkinNodesProperty(init_points)
