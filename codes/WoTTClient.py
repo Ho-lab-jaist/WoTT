@@ -164,10 +164,10 @@ async def main():
     sensor_coor = await consumed_thing.read_property('sensorCoordinateFrame')
     twin = DigitalTwin(init_points, init_cells)
     twin.draw(init_points)
-    consumed_thing.events['skinDeformed'].subscribe(
+    consumed_thing.events['skinDeformedDetection'].subscribe(
         on_next=twin.update,
-        on_completed=LOGGER.info('Subscribed for an event: skinDeformed'),
-        on_error=lambda error: LOGGER.info(f'Error for an event skinDeformed: {error}'),
+        on_completed=LOGGER.info('Subscribed for an event: skinDeformedDetection'),
+        on_error=lambda error: LOGGER.info(f'Error for an event skinDeformedDetection: {error}'),
     )
 
 
