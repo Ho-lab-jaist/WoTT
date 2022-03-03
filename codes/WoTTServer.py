@@ -18,7 +18,7 @@ import torch
 from torchvision import transforms
 
 # import TacNet
-from vgg_model import TacNet
+from tacnet_model import TacNet
 
 CATALOGUE_PORT = 9090
 WEBSOCKET_PORT = 9393
@@ -50,7 +50,7 @@ def get_free_node_ind(node_idx_path, label_idx_path):
 
 class TouchInformationProcessing(object):
     def __init__(self, tacnet_dir='./resources',
-                       trained_model = 'TacNet_21_11_23_realimage_128.pt',
+                       trained_model = 'TacNet_Unet_real_data',
                        cam_ind = [3, 1],
                        num_of_nodes = 707,
                        node_idx_path='./resources/node_idx.csv', 
