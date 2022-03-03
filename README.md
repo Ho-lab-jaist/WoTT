@@ -19,7 +19,10 @@ Developers must check the <a  href="docs/workflows.md">Workflow</a> before worki
 ## Built With
 - WoTTServer
   - python
-  - WoTpy
+  - wotpy
+  - pytorch
+  - torchvision
+  - opencv
 - WoT Client
 	- python
 	- WoTpy
@@ -42,12 +45,12 @@ Any contributions you make are **greatly appreciated**.
 Distributed under the MIT License. See `LICENSE` for more information.
 ## Contact
 - Project Manager
-	- Ho Anh Van - [hoanhvanlab@gmail.com](mailto:hoanhvanlab@gmail.com)
+	- Ho Anh Van - [van-ho@jaist.ac.jp](mailto:van-ho@jaist.ac.jp)
 - Advisors
 	- Tan Yasuo -  [ytan@jaist.ac.jp](mailto:ytan@jaist.ac.jp)
 	- Pham Van Cu - [cupham@jaist.ac.jp](mailto:cupham@jaist.ac.jp)
 - Developers
-	- Luu Khanh Quan - 
+	- Luu Khanh Quan - [quan-luu@jaist.ac.jp](mailto:quan-luu@jaist.ac.jp)
 	- Nguyen Tai Tuan - [tuan-nguyen@jaist.ac.jp](mailto:tuan-nguyen@jaist.ac.jp)
 ## Acknowledgements
 This work was supported in part by JSPS KAKENHI under Grant 18H01406 and JST Precursory Research for Embryonic Science and Technology PRESTO under Grant JPMJPR2038.
