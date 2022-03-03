@@ -51,7 +51,7 @@ def get_free_node_ind(node_idx_path, label_idx_path):
 class TouchInformationProcessing(object):
     def __init__(self, tacnet_dir='./resources',
                        trained_model = 'TacNet_21_11_23_realimage_128.pt',
-                       cam_ind = [2, 0],
+                       cam_ind = [3, 1],
                        num_of_nodes = 707,
                        node_idx_path='./resources/node_idx.csv', 
                        label_idx_path='./resources/label_idx.csv'):
