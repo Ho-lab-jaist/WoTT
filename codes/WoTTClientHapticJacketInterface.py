@@ -43,29 +43,6 @@ def cells_extraction(init_cells_info):
         init_cells.append(points)
     return np.array(init_cells)
 
-def time_eval(item):
-    t = (time.time_ns() - int(item.data))*10**-9
-    print(t)
-
-
-class TimeEval(object):
-    def __init__(self):
-        self.time_data = list()
-    def time_eval(self, item):
-        # print(int(item.data))
-        # print()
-        t_now = time.time_ns()
-        t = (t_now - int(item.data)) * 10 ** -9- 0.000140
-        if len(self.time_data) < 10:
-            self.time_data.append(t)
-            print(t)
-        elif len(self.time_data) == 10:
-            self.time_data = np.array(self.time_data)
-            mean_time = np.mean(self.time_data)
-            std_time = np.std(self.time_data)
-            print('mean of time: ',mean_time)
-            print('std of time: ',std_time)
-
 async def main():
 
     t_start = time.time_ns()
