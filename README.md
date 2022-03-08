@@ -43,6 +43,8 @@ $ python codes/WoTTClientHapticJacketInterface.py
 ```
 This program have been tested to interface with the GUI Visualization of the Haptic JacKet. Please modify according to your needs.
 
+The hapticAPI module is invoked every time the Deformed Event of tactile device is detected. This event is captured and processed for communication with vibration modules using ```utils/SensingCells``` class
+
 ## Contributing
 
 
